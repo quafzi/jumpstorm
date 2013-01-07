@@ -20,7 +20,7 @@ class Run extends Base
     {
         parent::configure();
         $this->setName('run');
-        $this->setDescription('Combines the other commands: install Magento, prepare unittesting, install extensions and run plugins');
+        $this->setDescription('Combines the other commands: install Magento, prepare testing, install extensions and run plugins');
     }
 
     /**
@@ -32,7 +32,7 @@ class Run extends Base
 
         $commands = array(
             'magento',
-            'unittesting',
+            'testing',
             'extensions',
             'plugins'
         );

@@ -62,16 +62,16 @@ Currently supported commands are
    * - ``extensions``
      - Install extensions_
 
-   * - ``unittesting``
-     - Install framework for unittests_ and prepare test database
+   * - ``testing``
+     - Install framework for tests_ and prepare test database
 
    * - ``plugins``
      - Run plugins_
 
    * - ``run``
-     - Combines the other commands: install Magento, prepare unittesting, install extensions and run plugins
+     - Combines the other commands: install Magento, prepare testing, install extensions and run plugins
 
-.. _unittests: Unittesting_
+.. _tests: Testing_
 
 The first thing you should do, is creating the configuration file, your installation should be based on.
 We provided a sample configuration file ``ini/sample.jumpstorm.ini``, *Jumpstorm* will use ``ini/jumpstorm.ini`` by
@@ -134,10 +134,10 @@ All configured extension will be installed by executing:
 
 Please note, that option ``-c /path/to/my/ini`` is optional.
 
-Unittesting
------------
+Testing
+-------
 
-We are big fans of test driven development. So unit testing is essential.
+We are big fans of test driven development. So testing is essential.
 In our sample configuration file, EcomDev_PHPUnit is used as default testing framework. We recommend to use this, so just
 copy this section to your configuration file (you could set its branch to ``dev``, if you want to use its latest
 features and bugfixes).
@@ -146,7 +146,7 @@ Now just run the following command and start testing and developing:
 
 ::
 
-  ./jumpstorm unittesting -c /path/to/my/ini
+  ./jumpstorm testing -c /path/to/my/ini
 
 Please note, that option ``-c /path/to/my/ini`` is optional.
 

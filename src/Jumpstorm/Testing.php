@@ -14,14 +14,14 @@ use Symfony\Component\Console\Output\Output;
 use \Exception as Exception;
 
 /**
- * Install unittesting extension.
- * By now, only {@link https://github.com/IvanChepurnyi/EcomDev_PHPUnit} is supported
+ * Prepare Testing
+ * By now, only {@link https://github.com/IvanChepurnyi/EcomDev_PHPUnit} and Behat are supported
  *
  * @package    Jumpstorm
  * @subpackage Jumpstorm
- * @author     Thomas Birke <thomas.birke@netresearch.de>
+ * @author     Thomas Birke <tbirke@netextreme.de>
  */
-class Unittesting extends Command
+class Testing extends Command
 {
     /**
      * @see vendor/symfony/src/Symfony/Component/Console/Command/Symfony\Component\Console\Command.Command::configure()
@@ -29,8 +29,8 @@ class Unittesting extends Command
     protected function configure()
     {
         parent::configure();
-        $this->setName('unittesting');
-        $this->setDescription('Install framework for unittests and prepare test database');
+        $this->setName('testing');
+        $this->setDescription('Install framework for tests and prepare test database');
     }
 
     /**
@@ -40,12 +40,37 @@ class Unittesting extends Command
     {
         $this->preExecute($input, $output);
 
-        // deploy unittesting framework using extensions command
-        $config = $this->config->unittesting;
-        $this->installExtension($config->framework, $config->extension);
+        // deploy testing framework using extensions command
+        $config = $this->config->testing;
 
-        // apply some configuration
-        $this->setupTestDatabase();
+        if ($config->composer) {
+            copy(
+                BASEDIR . $config->composer,
+                $this->config->getTarget() . DIRECTORY_SEPARATOR . 'composer.json'
+            );
+            $commands = array(
+                'curl http://getcomposer.org/ | php',
+                'php composer.phar install --dev'
+            );
+            chdir($this->config->getTarget());
+            foreach ($commands as $command) {
+                passthru(sprintf('%s', $this->config->getTarget(), $command), $return);
+            }
+        }
+
+        if ($config->extension) {
+            $this->installExtension($config->framework, $config->extension);
+        }
+
+        /* setup database if that is not forbidden by config */
+        if (false !== $config->db) {
+            $dbName = $config->db;
+            if (is_null($dbName)) {
+                $dbName = $this->config->getDbName() . '_test';
+            }
+            // apply some configuration
+            $this->setupTestDatabase($dbName);
+        }
 
         Logger::notice('Done');
     }
@@ -54,10 +79,10 @@ class Unittesting extends Command
      * Create test database and provide information for database access
      * @throws Exception
      */
-    protected function setupTestDatabase()
+    protected function setupTestDatabase($dbName)
     {
         // create database, same name as magento database, only appending '_test'
-        if (false === $this->createDatabase($this->config->getDbName() . '_test')) {
+        if (false === $this->createDatabase($dbName)) {
             throw new Exception('Could not create test database');
         }
 
@@ -69,7 +94,7 @@ class Unittesting extends Command
         exec($cmd, $result, $return);
 
         if (0 !== $return) {
-            Logger::error('Failed to set db name for unit testing framework');
+            Logger::error('Failed to set db name for testing framework');
         }
 
         // unify base url, as ecomdev/magento needs it with protocol and trailing slash given
@@ -82,7 +107,7 @@ class Unittesting extends Command
         exec($cmd, $result, $return);
 
         if (0 !== $return) {
-            Logger::error('Failed to set base url for unit testing framework');
+            Logger::error('Failed to set base url for testing framework');
         }
     }
 }

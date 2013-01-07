@@ -2,6 +2,8 @@
 <?php
 set_include_path(get_include_path() . PATH_SEPARATOR . realpath(dirname(__FILE__)));
 
+define('BASEDIR', dirname(__FILE__) . DIRECTORY_SEPARATOR);
+
 require 'lib/Zend/Exception.php';
 require 'lib/Zend/Config.php';
 require 'lib/Zend/Config/Exception.php';
@@ -22,7 +24,7 @@ use Symfony\Component\Console\Application;
 
 $console = new Application('Jumpstorm', '0.1');
 $console->add(new Jumpstorm\Magento());
-$console->add(new Jumpstorm\Unittesting());
+$console->add(new Jumpstorm\Testing());
 $console->add(new Jumpstorm\Extensions());
 $console->add(new Jumpstorm\Plugins());
 $console->add(new Jumpstorm\Run());
